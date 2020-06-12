@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html
-        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
     <title>Test</title>
-</head>
-<body>
-<p>Test</p>
-</body>
+</h:head>
+<h:body>
+    <p>Test</p>
+
+    <h:form>
+        <div class="ui-g-12">
+            <p:inputText placeholder="StorageTest" value="#{initialTestController.valueToStore}"
+                         requiredMessage="Store this value"/>
+        </div>
+        <div class="ui-g-12 button-container">
+            <h:commandButton onclick="#{initialTestController.saveValue()}" value="Submit"
+                             styleClass="green-btn raised-btn rounded-btn"/>
+        </div>
+    </h:form>
+</h:body>
 </html>

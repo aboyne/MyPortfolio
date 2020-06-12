@@ -4,6 +4,8 @@ import myportfolio.entities.Investment;
 
 public class InvestmentDAO implements InvestmentDAOInterface
 {
+
+
     public void openInvestment(Investment investment)
     {
 
