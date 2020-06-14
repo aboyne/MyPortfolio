@@ -57,6 +57,8 @@ public class TestInvestmentDao
 
     //TODO Test able to add another investment with same stock name as existing
 
+    //TODO test delete?
+
     //TODO Test able to retrieve a specific investment
 
     //TODO Test able to retrieve all instances of a specific investment
