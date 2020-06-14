@@ -1,6 +1,6 @@
 package myportfolio.dao;
 
-import com.arangodb.ArangoCollection;
+import com.arangodb.ArangoCursor;
 import com.arangodb.ArangoDB;
 import com.arangodb.ArangoDatabase;
 import com.arangodb.Protocol;
@@ -8,16 +8,20 @@ import com.arangodb.util.MapBuilder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import myportfolio.entities.Investment;
+import myportfolio.utils.JsonUtils;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class InvestmentDao
 {
 
     private ArangoDatabase dbCon;
 
-    private static final String INVESTMENT_COLLECTION = "investment";
-
+    private String investmentCollection = "investment";
 
     public InvestmentDao()
     {
@@ -30,22 +34,25 @@ public class InvestmentDao
                 .build().db("portfolio");
     }
 
-    InvestmentDao(ArangoDatabase dbCon)
+    InvestmentDao(final ArangoDatabase dbCon, final String investmentCollection)
     {
         this.dbCon = dbCon;
+        this.investmentCollection = investmentCollection;
+
     }
+
     public void addInvestment(Investment investment) throws JsonProcessingException
     {
         final String json = new ObjectMapper().writeValueAsString(investment);
 
-        dbCon.collection(INVESTMENT_COLLECTION).insertDocument(json);
+        dbCon.collection(investmentCollection).insertDocument(json);
     }
 
     public void deleteInvestment(Investment investment)
     {
-        final String aql = "FOR rec IN " + INVESTMENT_COLLECTION
+        final String aql = "FOR rec IN " + investmentCollection
                 + " FILTER rec._key == @UUID"
-                + " REMOVE rec IN " + INVESTMENT_COLLECTION;
+                + " REMOVE rec IN " + investmentCollection;
 
         final Map<String, Object> params = new MapBuilder()
                 .put("UUID", investment.getInstanceId()).get();
@@ -53,19 +60,64 @@ public class InvestmentDao
         dbCon.query(aql, params, null, String.class);
     }
 
-    public void getInvestment(String investmentName)
+    public Optional<Investment> getInvestment(String instanceId) throws IOException
     {
+        final String aql = "FOR rec IN " + investmentCollection +
+                " FILTER rec._key == @UUID" +
+                " RETURN rec";
 
+        final Map<String, Object> params = new MapBuilder()
+                .put("UUID", instanceId).get();
+
+        try (final ArangoCursor<String> cursor = dbCon.query(aql, params, null, String.class))
+        {
+            if (cursor.hasNext())
+            {
+                return Optional.of(JsonUtils.readValue(cursor.next(), Investment.class));
+            }
+        }
+        return Optional.empty();
     }
 
-    public void getAllInvestments(String investmentName)
+    public List<Investment> getMatchingInvestments(String investmentName) throws IOException
     {
+        final String aql = "FOR rec IN " + investmentCollection +
+                " FILTER rec.investment_name == @INVESTMENT_NAME" +
+                " RETURN rec";
 
+        final Map<String, Object> params = new MapBuilder()
+                .put("INVESTMENT_NAME", investmentName).get();
+
+        try (final ArangoCursor<String> cursor = dbCon.query(aql, params, null, String.class))
+        {
+            return cursor.asListRemaining()
+                    .stream()
+                    .map(s -> JsonUtils.readValue(s, Investment.class))
+                    .collect(Collectors.toList());
+        }
     }
 
-    public void updateInvestment(Investment investment)
-    {
 
+    public List<Investment> getAllInvestments(String investmentName) throws IOException
+    {
+        final String aql = "FOR rec IN " + investmentCollection +
+                " RETURN rec";
+
+        try (final ArangoCursor<String> cursor = dbCon.query(aql, null, null, String.class))
+        {
+            return cursor.asListRemaining()
+                    .stream()
+                    .map(s -> JsonUtils.readValue(s, Investment.class))
+                    .collect(Collectors.toList());
+        }
+    }
+
+    public void updateInvestment(Investment investment) throws JsonProcessingException
+    {
+        if (dbCon.collection(investmentCollection).documentExists(investment.getDocumentKey()))
+        {
+            dbCon.collection(investmentCollection).updateDocument(investment.getDocumentKey(), new ObjectMapper().writeValueAsString(investment));
+        }
     }
 
 

@@ -14,4 +14,6 @@ public class AbstractArangoDocument
     private String documentID;
     @JsonProperty("_key")
     private String documentKey;
+    @JsonProperty("_rev")
+    private String documentRevision;
 }

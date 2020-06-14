@@ -8,8 +8,11 @@ import myportfolio.entities.Investment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -19,7 +22,7 @@ public class TestInvestmentDao
 
     private InvestmentDao investmentDao;
 
-    private static final String INVESTMENT_COLLECTION = "investment";
+    private static final String INVESTMENT_COLLECTION = "test_investment";
 
     @BeforeEach
     void setup()
@@ -32,7 +35,7 @@ public class TestInvestmentDao
                 .useProtocol(Protocol.HTTP_VPACK)
                 .build().db("portfolio");
 
-        investmentDao = new InvestmentDao(dbCon);
+        investmentDao = new InvestmentDao(dbCon, INVESTMENT_COLLECTION);
     }
 
     @Test
@@ -55,13 +58,45 @@ public class TestInvestmentDao
         assertFalse(dbCon.collection(INVESTMENT_COLLECTION).documentExists(uuid));
     }
 
-    //TODO Test able to add another investment with same stock name as existing
 
-    //TODO test delete?
+    @Test
+    void verifyAbleToAddMultipleInvestmentsWithSameName() throws IOException
+    {
+        LocalDateTime now = LocalDateTime.now();
 
-    //TODO Test able to retrieve a specific investment
+        final String investmentName = "TestInvestment";
 
-    //TODO Test able to retrieve all instances of a specific investment
+        final Investment doc = new Investment()
+                .setSubmissionDate(now)
+                .setNumberOfShares(5)
+                .setInvestmentName(investmentName);
 
-    //TODO Test able to retrieve all investments
+        final Investment doc2 = new Investment()
+                .setSubmissionDate(now.plusDays(1))
+                .setNumberOfShares(15)
+                .setInvestmentName(investmentName);
+
+
+        final String investmentA = doc.getInstanceId();
+        final String investmentB = doc2.getInstanceId();
+
+        investmentDao.addInvestment(doc);
+        investmentDao.addInvestment(doc2);
+
+        assertTrue(dbCon.collection(INVESTMENT_COLLECTION).documentExists(investmentA));
+        assertTrue(dbCon.collection(INVESTMENT_COLLECTION).documentExists(investmentB));
+
+        List<Investment> investments = investmentDao.getAllInvestments(investmentName);
+
+        assertEquals(2, investments.size());
+        assertEquals(5, investments.get(0).getNumberOfShares());
+        assertEquals(15, investments.get(1).getNumberOfShares());
+
+        investmentDao.deleteInvestment(doc);
+        investmentDao.deleteInvestment(doc2);
+
+        assertFalse(dbCon.collection(INVESTMENT_COLLECTION).documentExists(investmentA));
+        assertFalse(dbCon.collection(INVESTMENT_COLLECTION).documentExists(investmentB));
+
+    }
 }
