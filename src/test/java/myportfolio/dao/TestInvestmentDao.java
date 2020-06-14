@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,10 +41,10 @@ public class TestInvestmentDao
     @Test
     void verifyAbleToAddNewInvestment() throws JsonProcessingException
     {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDate now = LocalDate.now();
 
         final Investment doc = new Investment()
-                .setSubmissionDate(now)
+                .setPurchaseDate(now)
                 .setNumberOfShares(5)
                 .setInvestmentName("TestInvestment");
 
@@ -62,17 +62,17 @@ public class TestInvestmentDao
     @Test
     void verifyAbleToAddMultipleInvestmentsWithSameName() throws IOException
     {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDate now = LocalDate.now();
 
         final String investmentName = "TestInvestment";
 
         final Investment doc = new Investment()
-                .setSubmissionDate(now)
+                .setPurchaseDate(now)
                 .setNumberOfShares(5)
                 .setInvestmentName(investmentName);
 
         final Investment doc2 = new Investment()
-                .setSubmissionDate(now.plusDays(1))
+                .setPurchaseDate(now.plusDays(1))
                 .setNumberOfShares(15)
                 .setInvestmentName(investmentName);
 
@@ -86,7 +86,7 @@ public class TestInvestmentDao
         assertTrue(dbCon.collection(INVESTMENT_COLLECTION).documentExists(investmentA));
         assertTrue(dbCon.collection(INVESTMENT_COLLECTION).documentExists(investmentB));
 
-        List<Investment> investments = investmentDao.getAllInvestments(investmentName);
+        List<Investment> investments = investmentDao.getMatchingInvestments(investmentName);
 
         assertEquals(2, investments.size());
         assertEquals(5, investments.get(0).getNumberOfShares());

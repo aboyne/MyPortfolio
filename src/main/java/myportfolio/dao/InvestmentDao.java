@@ -97,8 +97,7 @@ public class InvestmentDao
         }
     }
 
-
-    public List<Investment> getAllInvestments(String investmentName) throws IOException
+    public List<Investment> getAllInvestments() throws IOException
     {
         final String aql = "FOR rec IN " + investmentCollection +
                 " RETURN rec";

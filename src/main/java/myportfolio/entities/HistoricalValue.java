@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class HistoricalValue
 {
-    @JsonProperty("creation_date")
+    @JsonProperty("create_time")
     private LocalDateTime creationDate;
 
     @JsonProperty("total_value")

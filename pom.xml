@@ -12,7 +12,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>11</maven.compiler.release>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <version.thorntail>2.6.0.Final</version.thorntail>
         <timestamp>${maven.build.timestamp}</timestamp>
@@ -35,7 +36,6 @@
     <build>
         <finalName>myportfolio</finalName>
 
-        <!-- Uncomment for Swarm packaging -->
         <plugins>
             <plugin>
                 <groupId>io.thorntail</groupId>
@@ -86,6 +86,21 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.7.0</version>
+                <configuration>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                        <version>6.2</version> <!-- Use newer version of ASM -->
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
                 <version>2.7</version>
@@ -110,13 +125,6 @@
                 <version>3.0.0-M4</version>
             </plugin>
         </plugins>
-        <extensions>
-            <extension>
-                <groupId>com.github.platform-team</groupId>
-                <artifactId>aws-maven</artifactId>
-                <version>6.0.0</version>
-            </extension>
-        </extensions>
         <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
         <scriptSourceDirectory>${project.basedir}/src/main/scripts</scriptSourceDirectory>
         <testSourceDirectory>${project.basedir}/src/test/java</testSourceDirectory>
@@ -134,7 +142,6 @@
     </build>
 
     <dependencies>
-
         <!-- WildFly Swarm Fractions -->
         <dependency>
             <groupId>io.thorntail</groupId>

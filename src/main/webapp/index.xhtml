@@ -12,14 +12,21 @@
     <p>Test</p>
 
     <h:form>
-        <div class="ui-g-12">
-            <p:inputText placeholder="StorageTest" value="#{initialTestController.valueToStore}"
-                         requiredMessage="Store this value"/>
-        </div>
-        <div class="ui-g-12 button-container">
-            <h:commandButton onclick="#{initialTestController.saveValue()}" value="Submit"
-                             styleClass="green-btn raised-btn rounded-btn"/>
-        </div>
+   <span class="ui-float-label">
+       <p:inputText id="float-input"/>
+       <p:outputLabel for="@previous" value="Investment name"/>
+   </span>
+
+        <p>Number of shares </p><p:inputNumber id="numberOfShares" decimalPlaces="4"/>
+
+        <p>Share price </p><p:inputNumber id="sharePrice" decimalPlaces="4"/>
+
+
+
+
+
+
+
     </h:form>
 </h:body>
 </html>
