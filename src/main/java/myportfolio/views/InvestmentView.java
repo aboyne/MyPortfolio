@@ -2,6 +2,7 @@ package myportfolio.views;
 
 import lombok.Getter;
 import lombok.Setter;
+import myportfolio.controllers.InvestmentController;
 import myportfolio.entities.Investment;
 import myportfolio.models.InvestmentModel;
 
@@ -22,7 +23,12 @@ public class InvestmentView implements Serializable
     @Inject
     private InvestmentModel investmentModel;
 
+    @Inject
+    private InvestmentController investmentController;
+
     private String investmentName;
+
+    private String stockTicker;
 
     private double numberOfShares;
 

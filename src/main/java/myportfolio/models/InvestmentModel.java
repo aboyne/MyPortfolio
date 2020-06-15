@@ -4,10 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.java.Log;
 import myportfolio.dao.InvestmentDao;
 import myportfolio.entities.Investment;
+import myportfolio.views.InvestmentView;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.IOException;
 import java.io.Serializable;
@@ -19,6 +21,8 @@ import java.util.List;
 @Log
 public class InvestmentModel implements Serializable
 {
+    @Inject
+    private InvestmentView investmentView;
 
     private InvestmentDao investmentDao = new InvestmentDao();
 
@@ -40,5 +44,13 @@ public class InvestmentModel implements Serializable
     public void addInvestment(Investment investment) throws JsonProcessingException
     {
         investmentDao.addInvestment(investment);
+    }
+
+    public void persistUpdatesToInvestments() throws JsonProcessingException
+    {
+        for (Investment investment : investmentView.getInvestments())
+        {
+            investmentDao.updateInvestment(investment);
+        }
     }
 }

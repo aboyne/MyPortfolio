@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core">
 <h:head>
     <title>Test</title>
 </h:head>
@@ -31,7 +31,9 @@
 
     </h:form>
 
-    <p:dataTable id="investmentTable" var="investment" value="#{investmentView.investments}">
+    <p:dataTable id="investmentTable" var="investment"  editable="true" editMode="cell" value="#{investmentView.investments}">
+        <p:ajax event="cellEdit" listener="#{investmentModel.persistUpdatesToInvestments}"/>
+
         <p:column headerText="Id">
             <h:outputText value="#{investment.documentID}"/>
         </p:column>
@@ -40,19 +42,32 @@
             <h:outputText value="#{investment.investmentName}"/>
         </p:column>
 
+        <p:column headerText="Stock ticker">
+            <p:cellEditor>
+                <f:facet name="output"><h:outputText value="#{investment.stockTicker}" /></f:facet>
+                <f:facet name="input"><p:inputText id="stockTickerInput" value="#{investment.stockTicker}" style="width:96%"/></f:facet>
+            </p:cellEditor>
+        </p:column>
+
         <p:column headerText="Purchase Date">
             <h:outputText value="#{investment.purchaseDate}"/>
         </p:column>
 
-        <p:column headerText="Number of shares">
-            <h:outputText value="#{investment.historicalValues.get(0).numberOfShares}"/>
+        <p:column headerText="Initial Stock Price">
+            <h:outputText value="#{investment.initialStockPrice}"/>
         </p:column>
-        <p:column headerText="Share Value">
-            <h:outputText value="#{investment.historicalValues.get(0).shareValue}"/>
+        <p:column headerText="Initial Total Value">
+            <h:outputText value="#{investment.initialInvestmentValue}"/>
         </p:column>
-        <p:column headerText="Total Value">
-            <h:outputText value="#{investment.historicalValues.get(0).value}"/>
+        <p:column headerText="Current Share Price">
+            <h:outputText value="#{investment.currentStockPrice}"/>
+        </p:column>
+        <p:column headerText="Current Total Value">
+            <h:outputText value="#{investment.currentInvestmentValue}"/>
         </p:column>
     </p:dataTable>
+
+    <h:commandButton action="#{investmentController.updateInvestmentStockPrices()}" value="Update stock prices"
+                     styleClass="rounded-btn" update="investmentTable" />
 </h:body>
 </html>

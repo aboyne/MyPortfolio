@@ -37,5 +37,6 @@ public class HistoricalValue
         this.shareValue = shareValue;
         this.numberOfShares = numberOfShares;
         this.value = shareValue * numberOfShares;
+        this.creationDate = LocalDateTime.now();
     }
 }

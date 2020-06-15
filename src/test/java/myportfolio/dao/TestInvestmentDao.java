@@ -45,7 +45,7 @@ public class TestInvestmentDao
 
         final Investment doc = new Investment()
                 .setPurchaseDate(now)
-                .setHistoricalValueAtPurchase(5, 5)
+                .addHistoricalValue(5, 5, LocalDate.of(2010, 1, 1))
                 .setInvestmentName("TestInvestment");
 
         final String uuid = doc.getInstanceId();
@@ -65,12 +65,12 @@ public class TestInvestmentDao
 
         final Investment doc = new Investment()
                 .setPurchaseDate(now)
-                .setHistoricalValueAtPurchase(5, 5)
+                .addHistoricalValue(5, 5, LocalDate.of(2010, 1, 1))
                 .setInvestmentName(investmentName);
 
         final Investment doc2 = new Investment()
                 .setPurchaseDate(now.plusDays(1))
-                .setHistoricalValueAtPurchase(5, 15)
+                .addHistoricalValue(5, 15, LocalDate.of(2010, 1, 1))
                 .setInvestmentName(investmentName);
 
 

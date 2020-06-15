@@ -18,14 +18,13 @@ public class UpdateInvestments
 
         List<Investment> investments = investmentDao.getAllInvestments();
 
-
         FinnService finnService = new FinnService();
 
         for (Investment investment : investments)
         {
             StockCandle stockCandle = finnService.getStockCandle(investment.getStockTicker());
-            HistoricalValue historicalValue = investment.getHistoricalValues().get(investment.getHistoricalValues().size() - 1);
-
+            investment.addHistoricalValue(stockCandle.getCurrentPrice());
+            investmentDao.updateInvestment(investment);
         }
 
     }

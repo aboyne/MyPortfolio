@@ -46,7 +46,6 @@ private static final String TOKEN = "brjs7snrh5r9g3ota6u0";
             catch (final Exception e)
             {
                 log.log(Level.SEVERE, "Failure to retrieve stock price", e);
-//                addFacesWarningMessage("Failure to retrieve stock price");
             }
         }
         return null;
