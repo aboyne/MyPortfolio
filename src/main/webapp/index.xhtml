@@ -2,8 +2,6 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui">
 <h:head>
     <title>Test</title>
@@ -13,20 +11,48 @@
 
     <h:form>
    <span class="ui-float-label">
-       <p:inputText id="float-input"/>
+       <p:inputText id="float-input" value="#{investmentView.investmentName}"/>
        <p:outputLabel for="@previous" value="Investment name"/>
    </span>
 
-        <p>Number of shares </p><p:inputNumber id="numberOfShares" decimalPlaces="4"/>
+        <p>Number of shares </p><p:inputNumber id="numberOfShares" value="#{investmentView.numberOfShares}"
+                                               decimalPlaces="4"/>
 
-        <p>Share price </p><p:inputNumber id="sharePrice" decimalPlaces="4"/>
+        <p>Share price </p><p:inputNumber id="sharePrice" value="#{investmentView.sharePrice}" decimalPlaces="4"/>
+
+        <p:outputLabel for="purchaseDate" value="Purchase Date:"/>
+        <p:datePicker id="purchaseDate" value="#{investmentView.purchaseDate}" showIcon="true"/>
 
 
-
-
-
+        <h:commandButton action="#{investmentController.addInvestment(investmentView.purchaseDate, investmentView.investmentName,
+        investmentView.numberOfShares, investmentView.sharePrice )}" value="Submit"
+                         styleClass="rounded-btn" update="investmentTable" />
 
 
     </h:form>
+
+    <p:dataTable id="investmentTable" var="investment" value="#{investmentView.investments}">
+        <p:column headerText="Id">
+            <h:outputText value="#{investment.documentID}"/>
+        </p:column>
+
+        <p:column headerText="Investment name">
+            <h:outputText value="#{investment.investmentName}"/>
+        </p:column>
+
+        <p:column headerText="Purchase Date">
+            <h:outputText value="#{investment.purchaseDate}"/>
+        </p:column>
+
+        <p:column headerText="Number of shares">
+            <h:outputText value="#{investment.historicalValues.get(0).numberOfShares}"/>
+        </p:column>
+        <p:column headerText="Share Value">
+            <h:outputText value="#{investment.historicalValues.get(0).shareValue}"/>
+        </p:column>
+        <p:column headerText="Total Value">
+            <h:outputText value="#{investment.historicalValues.get(0).value}"/>
+        </p:column>
+    </p:dataTable>
 </h:body>
 </html>

@@ -2,16 +2,16 @@ package myportfolio.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.java.Log;
 import myportfolio.dao.InvestmentDao;
 import myportfolio.entities.Investment;
-import org.primefaces.PrimeFaces;
-import org.primefaces.context.PrimeFacesContext;
+import myportfolio.models.InvestmentModel;
+import myportfolio.views.InvestmentView;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.IOException;
 import java.io.Serializable;
@@ -24,19 +24,29 @@ import java.util.List;
 @Named(value = "investmentController")
 public class InvestmentController implements Serializable
 {
+
+    @Inject
+    private InvestmentModel investmentModel;
+
+    @Inject
+    private InvestmentView investmentView;
+
+
     @Getter
     private List<Investment> investments = new ArrayList<>();
 
-    public void addInvestment(LocalDate purchaseDate, String investmentName, double numberOfShares)
+
+    public void addInvestment(LocalDate purchaseDate, String investmentName, double numberOfShares, double sharePrice)
     {
         final Investment investment = new Investment()
                 .setInvestmentName(investmentName)
-                .setNumberOfShares(numberOfShares)
-                .setPurchaseDate(purchaseDate);
+                .setPurchaseDate(purchaseDate)
+                .setHistoricalValueAtPurchase(sharePrice, numberOfShares);
 
         try
         {
-            new InvestmentDao().addInvestment(investment);
+            investmentModel.addInvestment(investment);
+            refreshInvestmentTable();
         }
         catch (JsonProcessingException e)
         {
@@ -45,22 +55,8 @@ public class InvestmentController implements Serializable
         }
     }
 
-    public void getAllInvestments()
+    public void refreshInvestmentTable()
     {
-        try
-        {
-            investments = new InvestmentDao().getAllInvestments();
-        }
-        catch (IOException e)
-        {
-            log.severe("Unable to get all investments: " + e.getMessage());
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Unable to get all investments.", ""));
-
-        }
+        investmentView.retrieveAllInvestments();
     }
-
-
-
-
-
 }

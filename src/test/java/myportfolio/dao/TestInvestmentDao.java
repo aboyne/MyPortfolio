@@ -5,6 +5,7 @@ import com.arangodb.ArangoDatabase;
 import com.arangodb.Protocol;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import myportfolio.entities.Investment;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +14,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestInvestmentDao
@@ -45,7 +45,7 @@ public class TestInvestmentDao
 
         final Investment doc = new Investment()
                 .setPurchaseDate(now)
-                .setNumberOfShares(5)
+                .setHistoricalValueAtPurchase(5, 5)
                 .setInvestmentName("TestInvestment");
 
         final String uuid = doc.getInstanceId();
@@ -53,9 +53,6 @@ public class TestInvestmentDao
         investmentDao.addInvestment(doc);
 
         assertTrue(dbCon.collection(INVESTMENT_COLLECTION).documentExists(uuid));
-
-        investmentDao.deleteInvestment(doc);
-        assertFalse(dbCon.collection(INVESTMENT_COLLECTION).documentExists(uuid));
     }
 
 
@@ -68,12 +65,12 @@ public class TestInvestmentDao
 
         final Investment doc = new Investment()
                 .setPurchaseDate(now)
-                .setNumberOfShares(5)
+                .setHistoricalValueAtPurchase(5, 5)
                 .setInvestmentName(investmentName);
 
         final Investment doc2 = new Investment()
                 .setPurchaseDate(now.plusDays(1))
-                .setNumberOfShares(15)
+                .setHistoricalValueAtPurchase(5, 15)
                 .setInvestmentName(investmentName);
 
 
@@ -89,14 +86,14 @@ public class TestInvestmentDao
         List<Investment> investments = investmentDao.getMatchingInvestments(investmentName);
 
         assertEquals(2, investments.size());
-        assertEquals(5, investments.get(0).getNumberOfShares());
-        assertEquals(15, investments.get(1).getNumberOfShares());
+        assertEquals(5, investments.get(0).getHistoricalValues().get(0).getNumberOfShares());
+        assertEquals(15, investments.get(1).getHistoricalValues().get(0).getNumberOfShares());
 
-        investmentDao.deleteInvestment(doc);
-        investmentDao.deleteInvestment(doc2);
+    }
 
-        assertFalse(dbCon.collection(INVESTMENT_COLLECTION).documentExists(investmentA));
-        assertFalse(dbCon.collection(INVESTMENT_COLLECTION).documentExists(investmentB));
-
+    @AfterEach
+    void cleardown() throws IOException
+    {
+        investmentDao.getAllInvestments().forEach(investment -> investmentDao.deleteInvestment(investment));
     }
 }

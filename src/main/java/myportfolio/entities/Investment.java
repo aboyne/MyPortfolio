@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import myportfolio.serializers.JsonLocalDateDeserializer;
 import myportfolio.serializers.JsonLocalDateSerializer;
-import myportfolio.serializers.JsonLocalDateTimeDeserializer;
-import myportfolio.serializers.JsonLocalDateTimeSerializer;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,16 +30,20 @@ public class Investment extends AbstractArangoDocument
     @JsonProperty("investment_name")
     private String investmentName;
 
-    @JsonProperty("value")
-    private List<HistoricalValue> historicalValue = new ArrayList<>();
+    @JsonProperty("historical_values")
+    private List<HistoricalValue> historicalValues = new ArrayList<>();
 
     @JsonDeserialize(using = JsonLocalDateDeserializer.class)
     @JsonSerialize(using = JsonLocalDateSerializer.class)
     @JsonProperty("purchase_date")
     private LocalDate purchaseDate;
 
-    @JsonProperty("number_of_shares")
-    private double numberOfShares;
+    public Investment setHistoricalValueAtPurchase(double sharePrice, double numberOfShares)
+    {
+        this.getHistoricalValues().add(new HistoricalValue(sharePrice, numberOfShares)
+                .setCreationDate(purchaseDate.atStartOfDay()));
+        return this;
+    }
 
     public String getDocumentKey() {
         return this.instanceId;
