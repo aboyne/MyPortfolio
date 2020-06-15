@@ -59,4 +59,5 @@ public class InvestmentController implements Serializable
     {
         investmentView.retrieveAllInvestments();
     }
+
 }

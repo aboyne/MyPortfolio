@@ -30,6 +30,9 @@ public class Investment extends AbstractArangoDocument
     @JsonProperty("investment_name")
     private String investmentName;
 
+    @JsonProperty("stock_ticker")
+    private String stockTicker;
+
     @JsonProperty("historical_values")
     private List<HistoricalValue> historicalValues = new ArrayList<>();
 
