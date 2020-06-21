@@ -15,6 +15,7 @@ import javax.inject.Named;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 
 @Log
 @ConversationScoped
@@ -29,10 +30,11 @@ public class InvestmentController implements Serializable
     private InvestmentView investmentView;
 
 
-    public void addInvestment(LocalDate purchaseDate, String investmentName, double numberOfShares, double sharePrice)
+    public void addInvestment(LocalDate purchaseDate, String investmentName, String stockTicker,  double numberOfShares, double sharePrice)
     {
         final Investment investment = new Investment()
                 .setInvestmentName(investmentName)
+                .setStockTicker(stockTicker)
                 .setPurchaseDate(purchaseDate)
                 .addHistoricalValue(sharePrice, numberOfShares, purchaseDate);
 
@@ -47,6 +49,12 @@ public class InvestmentController implements Serializable
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Unable to add investment!", ""));
         }
     }
+
+    public void saveInvestments() throws JsonProcessingException
+    {
+        investmentModel.persistUpdatesToInvestments();
+    }
+
 
     public void refreshInvestmentTable()
     {

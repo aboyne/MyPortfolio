@@ -15,6 +15,8 @@
        <p:outputLabel for="@previous" value="Investment name"/>
    </span>
 
+        <p>Stock ticker</p><p:inputText id="stockTicker" value="#{investmentView.stockTicker}"/>
+
         <p>Number of shares </p><p:inputNumber id="numberOfShares" value="#{investmentView.numberOfShares}"
                                                decimalPlaces="4"/>
 
@@ -25,11 +27,12 @@
 
 
         <h:commandButton action="#{investmentController.addInvestment(investmentView.purchaseDate, investmentView.investmentName,
-        investmentView.numberOfShares, investmentView.sharePrice )}" value="Submit"
+        investmentView.stockTicker, investmentView.numberOfShares, investmentView.sharePrice )}" value="Submit"
                          styleClass="rounded-btn" update="investmentTable" />
 
 
     </h:form>
+    <h:form>
 
     <p:dataTable id="investmentTable" var="investment"  editable="true" editMode="cell" value="#{investmentView.investments}">
         <p:ajax event="cellEdit" listener="#{investmentModel.persistUpdatesToInvestments}"/>
@@ -67,7 +70,14 @@
         </p:column>
     </p:dataTable>
 
+        <h:commandButton action="#{investmentController.saveInvestments()}" value="Save investments prices"
+                         styleClass="rounded-btn" update="investmentTable" />
+    </h:form>
+
+    <h:form>
+
     <h:commandButton action="#{investmentController.updateInvestmentStockPrices()}" value="Update stock prices"
                      styleClass="rounded-btn" update="investmentTable" />
+    </h:form>
 </h:body>
 </html>

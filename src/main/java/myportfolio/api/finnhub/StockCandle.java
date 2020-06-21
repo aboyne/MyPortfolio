@@ -24,6 +24,9 @@ public class StockCandle
     @JsonProperty("c")
     private double currentPrice;
 
+    @JsonProperty("t")
+    private long timestamp;
+
     @JsonProperty("pc")
     private double previousClosePrice;
 }

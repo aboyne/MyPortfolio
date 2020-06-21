@@ -26,7 +26,9 @@ private static final String TOKEN = "brjs7snrh5r9g3ota6u0";
         try (final CloseableClient client = new CloseableClient(ClientBuilder.newClient().register(JacksonFeatures.class)))
         {
             final ResteasyWebTarget webTarget = (ResteasyWebTarget) client.target(URL)
-                    .path(String.format("/quote?symbol=%s&token=%s", stockTicker.toUpperCase(), TOKEN));
+                    .path("quote")
+                    .queryParam("symbol", stockTicker.toUpperCase())
+                    .queryParam("token", TOKEN);
 
             log.fine(() -> String.format("Invoking REST call to retrieve stock price candle for stock ticker: [%s]", stockTicker));
 
