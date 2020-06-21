@@ -68,6 +68,9 @@
         <p:column headerText="Current Total Value">
             <h:outputText value="#{investment.currentInvestmentValue}"/>
         </p:column>
+        <p:column headerText="Delete">
+            <h:commandButton action="#{investmentController.delete(investment)}" value="Delete"
+                             styleClass="rounded-btn" update="investmentTable" />        </p:column>
     </p:dataTable>
 
         <h:commandButton action="#{investmentController.saveInvestments()}" value="Save investments prices"

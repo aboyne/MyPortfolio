@@ -46,6 +46,11 @@ public class InvestmentModel implements Serializable
         investmentDao.addInvestment(investment);
     }
 
+    public void deleteInvestment(Investment investment)
+    {
+        investmentDao.deleteInvestment(investment);
+    }
+
     public void persistUpdatesToInvestments() throws JsonProcessingException
     {
         for (Investment investment : investmentView.getInvestments())
