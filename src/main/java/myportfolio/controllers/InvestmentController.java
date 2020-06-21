@@ -61,6 +61,12 @@ public class InvestmentController implements Serializable
         investmentView.retrieveAllInvestments();
     }
 
+    public void delete(Investment investment)
+    {
+        investmentModel.deleteInvestment(investment);
+        investmentView.retrieveAllInvestments();
+    }
+
     public void updateInvestmentStockPrices()
     {
         UpdateInvestments updateInvestments = new UpdateInvestments();
