@@ -13,7 +13,6 @@ import myportfolio.serializers.JsonLocalDateDeserializer;
 import myportfolio.serializers.JsonLocalDateSerializer;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -59,31 +58,4 @@ public class Investment extends AbstractArangoDocument
     public String getDocumentKey() {
         return this.instanceId;
     }
-
-    @JsonIgnore
-    public double getInitialStockPrice()
-    {
-        return historicalValues.get(0).getShareValue();
-    }
-
-    @JsonIgnore
-    public double getInitialInvestmentValue()
-    {
-        return historicalValues.get(0).getValue();
-    }
-
-    @JsonIgnore
-    public double getCurrentStockPrice()
-    {
-        HistoricalValue recent = historicalValues.get(historicalValues.size()-1);
-        return recent.getShareValue();
-    }
-
-    @JsonIgnore
-    public double getCurrentInvestmentValue()
-    {
-        HistoricalValue recent = historicalValues.get(historicalValues.size()-1);
-        return recent.getValue();
-    }
-
 }

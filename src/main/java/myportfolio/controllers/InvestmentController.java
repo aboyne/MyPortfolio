@@ -2,12 +2,15 @@ package myportfolio.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.java.Log;
+import myportfolio.dao.InvestmentDao;
 import myportfolio.entities.Investment;
-import myportfolio.models.InvestmentModel;
+import myportfolio.investment.DisplayableInvestment;
+import myportfolio.investment.InvestmentConverter;
 import myportfolio.processors.UpdateInvestments;
-import myportfolio.views.InvestmentView;
+import myportfolio.investment.InvestmentView;
 
 import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
@@ -15,20 +18,18 @@ import javax.inject.Named;
 import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Log
-@ConversationScoped
+@SessionScoped
 @Named(value = "investmentController")
 public class InvestmentController implements Serializable
 {
-
-    @Inject
-    private InvestmentModel investmentModel;
+    private InvestmentDao investmentDao = new InvestmentDao();
 
     @Inject
     private InvestmentView investmentView;
-
 
     public void addInvestment(LocalDate purchaseDate, String investmentName, String stockTicker,  double numberOfShares, double sharePrice)
     {
@@ -40,7 +41,7 @@ public class InvestmentController implements Serializable
 
         try
         {
-            investmentModel.addInvestment(investment);
+            investmentDao.addInvestment(investment);
             refreshInvestmentTable();
         }
         catch (JsonProcessingException e)
@@ -52,19 +53,21 @@ public class InvestmentController implements Serializable
 
     public void saveInvestments() throws JsonProcessingException
     {
-        investmentModel.persistUpdatesToInvestments();
+        for (DisplayableInvestment investment : investmentView.getInvestments())
+        {
+            investmentDao.updateInvestment(InvestmentConverter.convert(investment));
+        }
     }
-
 
     public void refreshInvestmentTable()
     {
-        investmentView.retrieveAllInvestments();
+        investmentView.refreshInvestments();
     }
 
     public void delete(Investment investment)
     {
-        investmentModel.deleteInvestment(investment);
-        investmentView.retrieveAllInvestments();
+        investmentDao.deleteInvestment(investment);
+        investmentView.refreshInvestments();
     }
 
     public void updateInvestmentStockPrices()
@@ -73,11 +76,27 @@ public class InvestmentController implements Serializable
         try
         {
             updateInvestments.updateAllInvestmentStockPrices();
+            investmentView.refreshInvestments();
         }
         catch (IOException e)
         {
             log.severe("Unable to update investment stock prices: " + e.getMessage());
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Unable to update investment stock prices", ""));
         }
+    }
+
+    public List<Investment> getAllInvestments()
+    {
+        try
+        {
+            return investmentDao.getAllInvestments();
+        }
+        catch (IOException e)
+        {
+            log.severe("Unable to get all investments: " + e.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Unable to get all investments.", ""));
+
+        }
+        return new ArrayList<>();
     }
 }

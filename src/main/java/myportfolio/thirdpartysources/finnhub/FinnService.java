@@ -1,8 +1,8 @@
-package myportfolio.api.services;
+package myportfolio.thirdpartysources.finnhub;
 
 import com.fasterxml.jackson.jaxrs.annotation.JacksonFeatures;
 import lombok.extern.java.Log;
-import myportfolio.api.finnhub.StockCandle;
+import myportfolio.thirdpartysources.finnhub.StockCandle;
 import myportfolio.utils.CloseableClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 

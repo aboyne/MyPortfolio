@@ -35,10 +35,10 @@
     <h:form>
 
     <p:dataTable id="investmentTable" var="investment"  editable="true" editMode="cell" value="#{investmentView.investments}">
-        <p:ajax event="cellEdit" listener="#{investmentModel.persistUpdatesToInvestments}"/>
+        <p:ajax event="cellEdit" listener="#{investmentController.saveInvestments}"/>
 
         <p:column headerText="Id">
-            <h:outputText value="#{investment.documentID}"/>
+            <h:outputText value="#{investment.instanceId}"/>
         </p:column>
 
         <p:column headerText="Investment name">
@@ -68,9 +68,13 @@
         <p:column headerText="Current Total Value">
             <h:outputText value="#{investment.currentInvestmentValue}"/>
         </p:column>
+        <p:column headerText="Percentage Change">
+            <h:outputText value="#{investment.percentageChange}"/>
+        </p:column>
         <p:column headerText="Delete">
             <h:commandButton action="#{investmentController.delete(investment)}" value="Delete"
-                             styleClass="rounded-btn" update="investmentTable" />        </p:column>
+                             styleClass="rounded-btn" update="investmentTable" />
+        </p:column>
     </p:dataTable>
 
         <h:commandButton action="#{investmentController.saveInvestments()}" value="Save investments prices"

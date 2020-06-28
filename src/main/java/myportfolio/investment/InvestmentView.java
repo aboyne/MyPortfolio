@@ -1,10 +1,9 @@
-package myportfolio.views;
+package myportfolio.investment;
 
 import lombok.Getter;
 import lombok.Setter;
-import myportfolio.controllers.InvestmentController;
 import myportfolio.entities.Investment;
-import myportfolio.models.InvestmentModel;
+import myportfolio.investment.InvestmentPresenter;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ConversationScoped;
@@ -20,12 +19,6 @@ import java.util.List;
 @Named(value = "investmentView")
 public class InvestmentView implements Serializable
 {
-    @Inject
-    private InvestmentModel investmentModel;
-
-    @Inject
-    private InvestmentController investmentController;
-
     private String investmentName;
 
     private String stockTicker;
@@ -36,17 +29,20 @@ public class InvestmentView implements Serializable
 
     private LocalDate purchaseDate;
 
-    private List<Investment> investments;
+    private List<DisplayableInvestment> investments;
+
+    @Inject
+    private InvestmentPresenter investmentPresenter;
 
     @PostConstruct
     public void init()
     {
-        retrieveAllInvestments();
+        refreshInvestments();
     }
 
-    public void retrieveAllInvestments()
+    public void refreshInvestments()
     {
-        investments = investmentModel.getAllInvestments();
-
+        setInvestments(investmentPresenter.getAllInvestments());
     }
+
 }
